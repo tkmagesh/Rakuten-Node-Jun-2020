@@ -1,0 +1,8 @@
+Todo:
+
+1. All data persistance logic (reading and writing in file) should be implemented in /services/bugDb.js
+
+2. All data persistence logic must be implemented using async api
+    fs.readFileSync & fs.writeFileSync are forbidden
+
+3. update bugService to persist the data in all the methods (getById, save, remove, update)
