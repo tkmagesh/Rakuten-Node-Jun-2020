@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Event Loop</title>
+    <script>
+    (function(){
+        window.addEventListener('load', onDocumentLoad);
+        function onDocumentLoad(){
+            var btnDoWork = document.getElementById('btnDoWork');
+            btnDoWork.addEventListener('click', onBtnDoWorkClick);
+        }
+        function onBtnDoWorkClick(){
+            displayMessage('Work Started');
+            setTimeout(triggerWork);
+        }
+        function triggerWork(){
+            doWork(onWorkCompletion, onWorkProgress);
+        }
+
+        function onWorkCompletion(){
+            displayMessage('Work Completed');
+        }
+        function onWorkProgress(percentageCompleted){
+            document.getElementById('workProgress').value = percentageCompleted;
+        }
+
+        function displayMessage(msg){
+            var divMessages = document.getElementById('divMessages');
+            divMessages.innerHTML += msg + '<br/>';
+        }
+
+        //sync
+        /* 
+        function doWork(){
+            for (var i = 0; i < 20000; i++)
+                for (var j = 0; j < 10000; j++)
+                    for (var k = 0; k < 100; k++) {
+
+                    }
+        } 
+        */
+        
+        //async
+        function doWork(workCompleteCallback, workProgressCallback){
+            var totalIterations = 1000,
+                currentIteration = 0 ;
+            
+            function oneIteration(){
+                for(var i=0; i< (20000/totalIterations); i++)
+                for(var j=0; j<10000; j++)
+                for(var k=0; k<100; k++){
+
+                }
+                ++currentIteration;
+                if (currentIteration % 10 === 0 && typeof workProgressCallback === 'function'){
+                    var percentageCompleted = (currentIteration/totalIterations) * 100;
+                    workProgressCallback(percentageCompleted)
+                }
+                if (currentIteration < totalIterations){
+                    setTimeout(oneIteration);
+                } else {
+                    console.log('Job Done!');
+                    if (typeof workCompleteCallback === 'function')
+                        workCompleteCallback();
+                }
+            }
+            setTimeout(oneIteration);
+        }
+    })();
+    </script>
+</head>
+<body>
+    <h1>Event Loop</h1>
+    <hr>
+    <input type="text" name="" id="">
+    <input type="button" value="Do Work" id="btnDoWork">
+    <div>
+        <progress id="workProgress" min="0" max="100" value="0"></progress>
+    </div>
+    <div id="divMessages"></div>
+</body>
+</html>
