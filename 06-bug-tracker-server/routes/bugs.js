@@ -1,26 +1,17 @@
 const express = require('express'),
     router = express.Router(),
-    createError = require('http-errors')
-
-let bugList = [
-    { id: 1, name: 'Server communication failure', isClosed: false},
-    { id: 2, name: 'User actions not recognized', isClosed: false },
-    { id: 3, name: 'Data integrity checks failed', isClosed: false},
-];
-
-function getById(bugId){
-    return bugList.find(bug => bug.id === bugId)
-}
+    createError = require('http-errors');
+    bugService = require('../services/bugService');
 
 //effective route path -> /bugs/
 router.get('/', (req,res, next) => {
-    res.json(bugList);
+    res.json(bugService.getAll());
 });
 
 // /bugs/1, /bugs/2
 router.get('/:id', (req, res, next) => {
     const bugId = parseInt(req.params.id),
-        bug = getById(bugId);
+        bug = bugService.getById(bugId);
     if (!bug){
         return next(createError(404));
     }
@@ -28,32 +19,30 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-    const bugData = req.body,
-        newBugId = bugList.reduce((result, bug) => result > bug.id ? result : bug.id) + 1
-        newBug = { ...bugData, id : newBugId };
-        bugList.push(newBug);
+    const bugData = req.body;
+    const newBug = bugService.save(bugData);
     res.status(201).json(newBug);
 });
 
 router.put('/:id', (req, res, next) => {
     const bugId = parseInt(req.params.id),
-        bug = getById(bugId),
-        updatedBug = req.body;
-    if (!bug) {
-        return next(createError(404));
-    }   
-    bugList = bugList.map(existingBug => existingBug.id === bugId ? updatedBug : existingBug);
-    res.json(updatedBug);
+        updatedBugData = req.body;
+    const updatedBug = bugService.update(bugId, updatedBugData);
+    if (updatedBug){
+        res.json(updatedBug);
+    } else {
+        next(createError(404));
+    }
 });
 
 router.delete('/:id', (req, res, next) => {
-    const bugId = parseInt(req.params.id),
-        bug = getById(bugId);
-    if (!bug) {
-        return next(createError(404));
+    const bugId = parseInt(req.params.id);
+    const result = bugService.remove(bugId);
+    if (!result){
+        next(createError(404));
+    } else {
+        res.status(200).json();
     }
-    bugList = bugList.filter(existingBug => existingBug.id !== bugId);
-    res.status(200).json();
 });
 
 module.exports = router;
