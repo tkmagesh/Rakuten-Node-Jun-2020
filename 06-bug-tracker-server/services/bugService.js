@@ -1,11 +1,16 @@
-let bugList = [
-    { id: 1, name: 'Server communication failure', isClosed: false},
-    { id: 2, name: 'User actions not recognized', isClosed: false },
-    { id: 3, name: 'Data integrity checks failed', isClosed: false},
-];
+const fs = require('fs'),
+    path = require('path')
+
+const dbFile = path.join(__dirname, '..', '/db/data.json');
+
+//the following line has to be removed
+let bugList = [];
 
 function getAll(){
-    return [...bugList];
+    //replace the following code with the 'async' alternative
+    const rawData = fs.readFileSync(dbFile),
+        bugList = JSON.parse(rawData);
+    return bugList;
 }
 
 function getById(bugId) {
@@ -13,9 +18,14 @@ function getById(bugId) {
 }
 
 function save(bugData){
+    //read from the file
+    const rawData = fs.readFileSync(dbFile),
+        bugList = JSON.parse(rawData);
     const newBugId = bugData.id !== 0 ? bugData.id : bugList.reduce((result, bug) => result > bug.id ? result : bug.id) + 1;
         newBug = { ...bugData, id: newBugId };
     bugList.push(newBug);
+    //write into the file
+    fs.writeFileSync(dbFile, JSON.stringify(bugList));
     return newBug;
 }
 
