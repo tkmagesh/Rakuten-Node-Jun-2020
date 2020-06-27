@@ -2,11 +2,17 @@ const bugDb = require('./bugDb');
 
 //the following line has to be removed
 
-
-function getAll(){
+//using callbacks
+/* function getAll(callback){
     //replace the following code with the 'async' alternative
-    const bugList = bugDb.getAllBugs();
-    return bugList;
+    bugDb.getAllBugs(function(err, bugsList){
+        return callback(err, bugsList);
+    });
+} */
+
+//using promises
+function getAll() {
+    return bugDb.getAllBugs();
 }
 
 function getById(bugId) {

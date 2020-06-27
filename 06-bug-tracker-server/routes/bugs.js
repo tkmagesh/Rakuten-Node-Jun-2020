@@ -4,8 +4,25 @@ const express = require('express'),
     bugService = require('../services/bugService');
 
 //effective route path -> /bugs/
-router.get('/', (req,res, next) => {
-    res.json(bugService.getAll());
+/* router.get('/', (req,res, next) => {
+    bugService.getAll(function(err, bugsList){
+        if (err){
+            return next(err);
+        }
+        res.json(bugsList);
+    })
+});
+ */
+
+//using promises
+router.get('/', (req, res, next) => {
+    const p = bugService.getAll();
+    p.then(function(bugsList){
+        res.json(bugsList);
+    })
+    .catch(function(err){
+        next(err);
+    });
 });
 
 // /bugs/1, /bugs/2
