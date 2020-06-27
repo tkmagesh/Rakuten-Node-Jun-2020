@@ -2,6 +2,11 @@ const express = require('express')
 const router = express.Router()
 const Subscriber = require('../models/subscriber')
 
+function authenticate(req, res, next){
+  //authenticate
+  next();
+}
+
 // Getting all subscribers
 router.get('/', async (req, res) => {
   try {
@@ -28,7 +33,7 @@ router.post('/', async (req, res) => {
 })
 
 // Getting one subscriber
-router.get('/:id', getSubscriber, (req, res) => {
+router.get('/:id', authenticate, getSubscriber, (req, res) => {
   res.json(res.subscriber)
 })
 
