@@ -1,5 +1,6 @@
 const fs = require('fs'),
-    path = require('path');
+    path = require('path'),
+    util = require('util');
 
 const dbFile = path.join(__dirname, '..', '/db/data.json');
 
@@ -19,7 +20,7 @@ function saveBugs(bugs, callback){
 } */
 
 //using promises
-function getAllBugs() {
+/* function getAllBugs() {
     return new Promise(function(resolve, reject){
         fs.readFile(dbFile, function (err, fileContents) {
             if (err) {
@@ -39,6 +40,32 @@ function saveBugs(bugs) {
             resolve();
         });
     })
+} */
+
+//using util.promisify
+/* const readFileAsync = util.promisify(fs.readFile),
+    writeFileAsync = util.promisify(fs.writeFile);
+
+function getAllBugs() {
+    return readFileAsync(dbFile, {encoding: 'utf8'})
+        .then(fileContents => JSON.parse(fileContents));
+}
+
+function saveBugs(bugs) {
+    return writeFileAsync(dbFile, JSON.stringify(bugs));
+} */
+
+//using bluebird
+const bluebird = require('bluebird');
+bluebird.promisifyAll(fs);
+
+function getAllBugs() {
+    return fs.readFileAsync(dbFile, { encoding: 'utf8' })
+        .then(fileContents => JSON.parse(fileContents));
+}
+
+function saveBugs(bugs) {
+    return fs.writeFileAsync(dbFile, JSON.stringify(bugs));
 }
 
 module.exports = { getAllBugs, saveBugs };
