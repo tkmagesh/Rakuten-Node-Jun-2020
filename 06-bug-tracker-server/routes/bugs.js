@@ -15,7 +15,7 @@ const express = require('express'),
  */
 
 //using promises
-router.get('/', (req, res, next) => {
+/* router.get('/', (req, res, next) => {
     const p = bugService.getAll();
     p.then(function(bugsList){
         res.json(bugsList);
@@ -23,28 +23,34 @@ router.get('/', (req, res, next) => {
     .catch(function(err){
         next(err);
     });
+}); */
+
+//using async await
+router.get('/', async (req, res, next) => {
+    const bugsList = await bugService.getAll();
+    res.json(bugsList);
 });
 
 // /bugs/1, /bugs/2
-router.get('/:id', (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
     const bugId = parseInt(req.params.id),
-        bug = bugService.getById(bugId);
+        bug = await bugService.getById(bugId);
     if (!bug){
         return next(createError(404));
     }
     res.json(bug);
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
     const bugData = req.body;
-    const newBug = bugService.save(bugData);
+    const newBug = await bugService.save(bugData);
     res.status(201).json(newBug);
 });
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', async (req, res, next) => {
     const bugId = parseInt(req.params.id),
         updatedBugData = req.body;
-    const updatedBug = bugService.update(bugId, updatedBugData);
+    const updatedBug = await bugService.update(bugId, updatedBugData);
     if (updatedBug){
         res.json(updatedBug);
     } else {

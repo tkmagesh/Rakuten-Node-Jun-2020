@@ -28,7 +28,7 @@ function getAllBugs() {
             const bugsList = JSON.parse(fileContents);
             return resolve(bugsList);
         });
-    })
+    });
     
 }
 

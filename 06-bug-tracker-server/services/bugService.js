@@ -11,45 +11,45 @@ const bugDb = require('./bugDb');
 } */
 
 //using promises
-function getAll() {
-    return bugDb.getAllBugs();
+async function getAll() {
+    return await bugDb.getAllBugs();
 }
 
-function getById(bugId) {
-    const bugList = bugDb.getAllBugs();
+async function getById(bugId) {
+    const bugList = await bugDb.getAllBugs();
     return bugList.find(bug => bug.id === bugId);
 }
 
-function save(bugData){
+async function save(bugData){
     //read from the file
-    const bugList = bugDb.getAllBugs();
+    const bugList = await bugDb.getAllBugs();
     const newBugId = bugData.id !== 0 ? bugData.id : bugList.reduce((result, bug) => result > bug.id ? result : bug.id) + 1;
         newBug = { ...bugData, id: newBugId };
     bugList.push(newBug);
     //write into the file
-    bugDb.saveBugs(bugList);
+    await bugDb.saveBugs(bugList);
     return newBug;
 }
 
-function update(bugId, updatedBug){
-    const bug = getById(bugId);
-    let bugList = bugDb.getAllBugs();
+async function update(bugId, updatedBug){
+    const bug = await getById(bugId);
+    let bugList = await bugDb.getAllBugs();
     if (!bug) {
         return null;
     }
     bugList = bugList.map(existingBug => existingBug.id === bugId ? updatedBug : existingBug);
-    bugDb.saveBugs(bugList);
+    await bugDb.saveBugs(bugList);
     return updatedBug;
 }
 
-function remove(bugId){
-    const bug = getById(bugId);
+async function remove(bugId){
+    const bug = await getById(bugId);
     if (!bug) {
         return null;
     }
-    let bugList = bugDb.getAllBugs();
+    let bugList = await bugDb.getAllBugs();
     bugList = bugList.filter(existingBug => existingBug.id !== bugId);
-    bugDb.saveBugs(bugList);
+    await bugDb.saveBugs(bugList);
     return {};
 }
 
