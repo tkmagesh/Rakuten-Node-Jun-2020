@@ -1,0 +1,41 @@
+MongoDB
+    NoSQL
+        Document based
+
+    Schemaless
+    Avoid Joins (why?)
+        Joins are costly
+
+
+Normalize
+    to avoid duplication
+        TO MAINTAIN THE INTEGRITY OF THE DATA DURING UPDATES
+
+REPORTING DATA (READ OPTIMIZED)
+
+OrderID, OrderDate, CustomerId, CustomerName, CustomerEmail, CustomerPhone, ProductId, ProductName, ProductCost, ProductUnits, ProductValue
+O-191, 10-Mar-2020, C-202, Magesh, tkmagesh@gmail.com, 999999, P-303, Pen, 10, 10, 100
+O-191, 10-Mar-2020, C-202, Magesh, tkmagesh@gmail.com, 999999, P-304, Pencil, 5, 10, 50
+
+
+
+TRANSACTIONAL DATA (UPDATES - WRITE OPTIMIZED)
+
+OrderMaster
+OrderID, OrderDate, CustomerId
+O-191, 10-Mar-2020, C-202
+
+CustomerMaster
+CustomerId, CustomerName, CustomerEmail, CustomerPhone
+C-202, Magesh, tkmagesh@gmail.com, 999999
+
+ProductsMaster
+ProductsId, ProductName, ProductCost
+P-303, Pen, 10
+P-304, Pencil, 5
+
+OrderDetail
+OrderId, ProductId, ProductUnits, ProductValue
+O-191, P-303, 10, 100
+O-191, P-304, 5, 50
+
